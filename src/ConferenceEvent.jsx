@@ -13,9 +13,32 @@ const ConferenceEvent = () => {
     const venueItems = useSelector((state) => state.venue);
     const dispatch = useDispatch();
     const remainingAuditoriumQuantity = 3 - venueItems.find(item => item.name === "Auditorium Hall (Capacity:200)").quantity;
+    
+    const calculateTotalCost = (section) => {
+        let totalCost = 0;
+        if (section === "venue") {
+            venueItems.forEach((item) => {
+                totalCost += item.cost * item.quantity;
+            });
+        } else if (section === "av") {
+            avItems.forEach((item) => {
+                totalCost += item.cost * item.quantity;
+            });
+        } else if (section === "meals") {
+            mealsItems.forEach((item) => {
+                if (item.selected) {
+                  totalCost += item.cost * numberOfPeople;
+                }
+              });
+        }
+    return totalCost;
+    };    
+    
     const avTotalCost = calculateTotalCost("av");
     const mealsItems = useSelector((state) => state.meals);
     const mealsTotalCost = calculateTotalCost("meals");
+    const venueTotalCost = calculateTotalCost("venue");
+
     const totalCosts = {
         venue: venueTotalCost,
         av: avTotalCost,
@@ -125,30 +148,6 @@ const ConferenceEvent = () => {
             </div>
         </>
     };
-    
-
-    const calculateTotalCost = (section) => {
-        let totalCost = 0;
-        if (section === "venue") {
-            venueItems.forEach((item) => {
-                totalCost += item.cost * item.quantity;
-            });
-        } else if (section === "av") {
-            avItems.forEach((item) => {
-                totalCost += item.cost * item.quantity;
-            });
-        } else if (section === "meals") {
-            mealsItems.forEach((item) => {
-                if (item.selected) {
-                  totalCost += item.cost * numberOfPeople;
-                }
-              });
-        }
-    return totalCost;
-    };
-
-    
-    const venueTotalCost = calculateTotalCost("venue");
 
     const navigateToProducts = (idType) => {
         if (idType == '#venue' || idType == '#addons' || idType == '#meals') {
